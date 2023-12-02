@@ -1,6 +1,11 @@
 # ----------------------- Questão 3 -----------------------
-# Descrição do programa: TODO: Criar uma descrição do pro-
-# grama que foi desenvolvido para o professor.
+# Descrição do programa: Programa criado para simular um
+# sistema de filas com um número de servidores, uma taxa de
+# chegada e uma taxa de serviço variáveis, de acordo com os
+# casos de teste propostos. A letra a da questão é apenas a
+# criação da função simulate, que simula o sistema de filas
+# e a letra b é a criação dos casos de teste e a execução
+# das simulações.
 # ---------------------------------------------------------
 # Autores (Números de matrícula):
 #   Cristhian Sala Minoves (20183005167)
