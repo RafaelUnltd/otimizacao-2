@@ -7,8 +7,90 @@
 #   Guilherme Moreira de Carvalho (20183017767)
 #   Rafael Willian Silva (201712040162)
 
+import numpy as np
+
+MAX_RANDOM_VALUE = 1
+MIN_RANDOM_VALUE = 0
+TOTAL_ITERATIONS = 1000
+TOTAL_SIMULATIONS = 100
+
+# Simula o sistema de filas
+# [arrival_rate]: Taxa de chegada (lambda)
+# [service_rate]: Taxa de serviço (mu)
+# [s]: Número de servidores
+# [T]: Tempo de simulação (Número de iterações)
+def simulate(arrival_rate, service_rate, s, T):
+    # Adiciona os vetores de controle da simulação
+    queue = []
+    waiting_customers = []
+    total_customers = []
+
+    attendants = []
+    for i in range(s):
+        # Adiciona um atendente livre (0... e sem tempo de serviço remanescente ..., 0)
+        attendants.append((0, 0)) 
+
+    # Simula o sistema de filas por T unidades de tempo
+    for i in range(T):
+        # Checa se algum cliente chegou
+        should_arrive_new_customer = np.random.uniform(MIN_RANDOM_VALUE, MAX_RANDOM_VALUE) < arrival_rate
+        if should_arrive_new_customer:
+            queue.append(i)
+        
+        # Verifica se algum atendente está livre
+        for j in range(len(attendants)):
+            if attendants[j][0] == 0:
+                # Verifica se existe alguém na fila
+                if len(queue) > 0:
+                    # Remove o primeiro cliente da fila
+                    queue.pop(0)
+                    # Cria uma tupla de atendente ocupado (1, iterações para finalizar o atendimento)
+                    attendant = (1, np.rint(1/service_rate))
+                    # Atualiza o estado do atendente
+                    attendants[j] = attendant
+            else:
+                remaining_service_time = attendants[j][1] - 1
+                if remaining_service_time <= 0:
+                    # Atendente está livre
+                    attendant = (0, 0)
+                    # Atualiza o estado do atendente
+                    attendants[j] = attendant
+                else:
+                    # Atualiza o tempo de serviço remanescente do atendente
+                    attendants[j] = (1, remaining_service_time)
+        
+        # Encontra o número de atendentes ocupados
+        busy_attendants = 0
+        for attendant in attendants:
+            if attendant[0] == 1:
+                busy_attendants += 1
+
+        # Atualiza os vetores de estado do sistema
+        waiting_customers.append(len(queue))
+        total_customers.append(len(queue) + busy_attendants)
+
+    return waiting_customers, total_customers
+
 def main():
-    # TODO: Resolver a questão e seus subitens (a, b, c...) aqui
+    # Criação dos casos de teste da letra b
+    test_cases = [
+        (0.3, 0.25, 1),
+        (0.3, 0.25, 2),
+        (0.3, 0.20, 3)
+    ]
+
+    # Executa as simulações para cada caso de teste
+    for test_case in test_cases:
+        waiting_for_iteration = []
+        total_for_iteration = []
+        for _ in range(TOTAL_SIMULATIONS):
+            waiting_customers, total_customers = simulate(test_case[0], test_case[1], test_case[2], TOTAL_ITERATIONS)
+            waiting_for_iteration.append(waiting_customers)
+            total_for_iteration.append(total_customers)
+        # TODO: Gerar os gráficos para cada caso de teste e salvar com savefig
+        print(waiting_for_iteration)
+        print(total_for_iteration)
+
     return
 
 main()
