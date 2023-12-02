@@ -2,6 +2,11 @@
 
 Esse trabalho tem como intuito o estudo de Teoria dos Jogos, Cadeias de Markov e Teoria de filas, através da formulação de scripts que executem e simulem as interações estudas por cada um desses tópicos.
 
+## Autores
+- Cristhian Sala Minoves
+- Guilherme Moreira de Carvalho
+- Rafael Willian Silva
+
 ## Pré-requisitos
 É necessário que o usuário possua o python instalado em sua máquina, assim como as seguintes bibliotecas de código:
 
