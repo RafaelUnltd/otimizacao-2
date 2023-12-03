@@ -10,7 +10,6 @@
 #   Guilherme Moreira de Carvalho (20183017767)
 #   Rafael Willian Silva (201712040162)
 
-import numpy as np
 import math
 
 class MMsQueue:
@@ -19,6 +18,7 @@ class MMsQueue:
         self.service_rate = service_rate
         self.s = s
 
+    # Calcula probabilidade de 0 clientes no sistema
     def P0(self):
         num = 1
         den = 0
@@ -31,41 +31,52 @@ class MMsQueue:
 
         return num / den
     
+    # Calcula a probabilidade de n clientes no sistema
     def Pn(self, n):
         if n < self.s:
             return (((self.arrival_rate / self.service_rate) ** n) / math.factorial(n)) * self.P0()
         else:
             return (((self.arrival_rate / self.service_rate) ** n) / (math.factorial(self.s) * (self.s ** (n - self.s)))) * self.P0()
 
+    # Calcula a probabilidade de 1 cliente no sistema
     def P1(self):
         return self.Pn(1)
     
+    # Calcula a probabilidade de 2 clientes no sistema
     def P2(self):
         return self.Pn(2)
     
+    # Calcula a probabilidade de 5 clientes no sistema
     def P5(self):
         return self.Pn(5)
     
+    # Calcula a probabilidade de 10 clientes no sistema
     def P10(self):
         return self.Pn(10)
     
+    # Calcula a taxa de utilização do sistema
     def rho(self):
         return self.arrival_rate / (self.s * self.service_rate)
     
+    # Calcula o número esperado de clientes no sistema
     def L(self):
         return self.Lq() + (self.arrival_rate / self.service_rate)
     
+    # Calcula o número esperado de clientes na fila
     def Lq(self):
         num = self.P0()*((self.arrival_rate / self.service_rate) ** self.s) * self.rho()
         den = math.factorial(self.s)*((1-self.rho())**2)
         return num / den
 
+    # Calcula o tempo esperado de um cliente no sistema (Incluindo atendimento)
     def W(self):
         return self.Wq() + (1 / self.service_rate)
     
+    # Calcula o tempo esperado de um cliente na fila (Sem incluir o atendimento)
     def Wq(self):
         return self.Lq() / self.arrival_rate
     
+    # Os próximos métodos calculam a probabilidade de um cliente esperar mais de t unidades de tempo na fila
     def P_Wq_equals_0(self):
         sum = 0
         for n in range(self.s):
