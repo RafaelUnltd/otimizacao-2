@@ -102,7 +102,7 @@ def main():
     for _ in range(TOTAL_SIMULATIONS):
         X.append(x)
 
-    print('Questão 3: Iniciando simulação das filas...')
+    print('\nQuestão 3: Iniciando simulação das filas...\n')
 
     # Executa as simulações para cada caso de teste
     for idx, test_case in enumerate(test_cases):
@@ -138,7 +138,7 @@ def main():
         )
         print('Resultado da simulação salvo em: ' + total_path)
     
-    print('Simulação concluída, confira os resultados na pasta ./results')
+    print('\nSimulação concluída, confira os resultados na pasta ./results')
 
     return
 

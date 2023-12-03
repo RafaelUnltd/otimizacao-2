@@ -108,7 +108,7 @@ def main():
     # Declaração das colunas da tabela
     columns = ('s', 'P0', 'P1', 'P2', 'P5', 'P10', 'L', 'Lq', 'W', 'Wq', 'P(Wq > 0)', 'P(Wq > 1)', 'P(Wq > 2)', 'P(Wq > 5)')
 
-    print('Questão 4: Cálculo das grandezas de uma fila M/M/s.')
+    print('\nQuestão 4: Cálculo das grandezas de uma fila M/M/s.')
 
     # Realiza as operações para cada caso de teste
     for test_case in test_cases:
