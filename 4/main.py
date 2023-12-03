@@ -11,6 +11,7 @@
 #   Rafael Willian Silva (201712040162)
 
 import numpy as np
+import math
 
 class MMsQueue:
     def __init__(self, arrival_rate, service_rate, s):
@@ -19,43 +20,75 @@ class MMsQueue:
         self.s = s
 
     def P0(self):
-        return 0
+        num = 1
+        den = 0
+
+        for n in range(self.s):
+            factor1= ((self.arrival_rate / self.service_rate) ** n) / math.factorial(n)
+            factor2 = ((self.arrival_rate / self.service_rate) ** self.s) / (math.factorial(self.s))
+            factor3 = 1.0 / (1.0 - (self.arrival_rate / (self.s * self.service_rate)))
+            den += factor1 + factor2 * factor3
+
+        return num / den
     
+    def Pn(self, n):
+        if n < self.s:
+            return (((self.arrival_rate / self.service_rate) ** n) / math.factorial(n)) * self.P0()
+        else:
+            return (((self.arrival_rate / self.service_rate) ** n) / (math.factorial(self.s) * (self.s ** (n - self.s)))) * self.P0()
+
     def P1(self):
-        return 0
+        return self.Pn(1)
     
     def P2(self):
-        return 0
+        return self.Pn(2)
     
     def P5(self):
-        return 0
+        return self.Pn(5)
     
     def P10(self):
-        return 0
+        return self.Pn(10)
+    
+    def rho(self):
+        return self.arrival_rate / (self.s * self.service_rate)
     
     def L(self):
-        return 0
+        return self.Lq() + (self.arrival_rate / self.service_rate)
     
     def Lq(self):
-        return 0
+        num = self.P0()*((self.arrival_rate / self.service_rate) ** self.s) * self.rho()
+        den = math.factorial(self.s)*((1-self.rho())**2)
+        return num / den
 
     def W(self):
-        return 0
+        return self.Wq() + (1 / self.service_rate)
     
     def Wq(self):
-        return 0
+        return self.Lq() / self.arrival_rate
+    
+    def P_Wq_equals_0(self):
+        sum = 0
+        for n in range(self.s):
+            if n == 0:
+                sum += self.P0()
+            else:
+                sum += self.Pn(n)
+        return sum
+    
+    def P_Wq_more_than_t(self, t):
+        return (1 - self.P_Wq_equals_0()) * math.exp((-1 * self.s * self.service_rate) * ((1 - self.rho()) ** t))
     
     def P_Wq_more_than_0(self):
-        return 0
+        return self.P_Wq_more_than_t(0)
     
     def P_Wq_more_than_1(self):
-        return 0
+        return self.P_Wq_more_than_t(1)
     
     def P_Wq_more_than_2(self):
-        return 0
+        return self.P_Wq_more_than_t(2)
     
-    def P_Wq_more_than_4(self):
-        return 0
+    def P_Wq_more_than_5(self):
+        return self.P_Wq_more_than_t(5)
 
 # Função que imprime a tabela com os dados computados de forma comparativa
 def print_table(columns, data):
@@ -67,13 +100,13 @@ def main():
     # Variáveis iniciais e casos de teste
     s_values = (1, 2, 3, 4)
     test_cases = [
-        (0.3, 0.30),
-        (0.3, 0.25),
-        (0.3, 0.20)
+        (2, 3),
+        (2, 5),
+        (8, 6)
     ]
 
     # Declaração das colunas da tabela
-    columns = ('s', 'P0', 'P1', 'P2', 'P5', 'P10', 'L', 'Lq', 'W', 'Wq', 'P(Wq > 0)', 'P(Wq > 1)', 'P(Wq > 2)', 'P(Wq > 4)')
+    columns = ('s', 'P0', 'P1', 'P2', 'P5', 'P10', 'L', 'Lq', 'W', 'Wq', 'P(Wq > 0)', 'P(Wq > 1)', 'P(Wq > 2)', 'P(Wq > 5)')
 
     print('Questão 4: Cálculo das grandezas de uma fila M/M/s.')
 
@@ -103,12 +136,15 @@ def main():
                 queue.P_Wq_more_than_0(),
                 queue.P_Wq_more_than_1(),
                 queue.P_Wq_more_than_2(),
-                queue.P_Wq_more_than_4()
+                queue.P_Wq_more_than_5()
             ]
             data.append(row_data)
 
         # Imprime a tabela a partir dos dados computados
         print_table(columns, data)
+
+    print('\nNeste último caso, os resultados não se aplicam em s=1, pois \u03BB > s\u03BC, fazendo com que a fila cresça indefinidamenta a longo prazo.')
+    print('\nFim da execução.')
         
     return
 
