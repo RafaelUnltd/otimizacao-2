@@ -13,6 +13,7 @@
 #   Rafael Willian Silva (201712040162)
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 MAX_RANDOM_VALUE = 1
 MIN_RANDOM_VALUE = 0
@@ -42,7 +43,7 @@ def simulate(arrival_rate, service_rate, s, T):
         if should_arrive_new_customer:
             queue.append(i)
         
-        # Verifica se algum atendente está livre
+        # Verifica se algum atendente está+ livre
         for j in range(len(attendants)):
             if attendants[j][0] == 0:
                 # Verifica se existe alguém na fila
@@ -76,6 +77,17 @@ def simulate(arrival_rate, service_rate, s, T):
 
     return waiting_customers, total_customers
 
+# Salva os resultados da simulação em um arquivo png no caminho que for enviado por parâmetro
+def save_simulation_results(X, Y, title, xlabel, ylabel, filepath):
+    fig, ax = plt.subplots()
+    ax.plot(X, Y, linewidth=1.0)
+    
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+
+    plt.savefig(filepath, dpi=300, bbox_inches='tight')
+
 def main():
     # Criação dos casos de teste da letra b
     test_cases = [
@@ -84,17 +96,49 @@ def main():
         (0.3, 0.20, 3)
     ]
 
+    # Prepara os valores do eixo X para plotar futuramente
+    x = np.arange(0, TOTAL_ITERATIONS, 1)
+    X = []
+    for _ in range(TOTAL_SIMULATIONS):
+        X.append(x)
+
+    print('Questão 3: Iniciando simulação das filas...')
+
     # Executa as simulações para cada caso de teste
-    for test_case in test_cases:
+    for idx, test_case in enumerate(test_cases):
         waiting_for_iteration = []
         total_for_iteration = []
+
         for _ in range(TOTAL_SIMULATIONS):
             waiting_customers, total_customers = simulate(test_case[0], test_case[1], test_case[2], TOTAL_ITERATIONS)
             waiting_for_iteration.append(waiting_customers)
             total_for_iteration.append(total_customers)
-        # TODO: Gerar os gráficos para cada caso de teste e salvar com savefig
-        print(waiting_for_iteration)
-        print(total_for_iteration)
+
+        # Plota os valores de usuários em espera na fila
+        waiting_path = f'./results/test_case_{idx + 1}/waiting.png'
+        save_simulation_results(
+            X,
+            waiting_for_iteration,
+            f'Número de clientes na fila para \u03BB={test_case[0]}, \u03BC={test_case[1]} e s={test_case[2]}',
+            'Iteração',
+            'Número de clientes na fila',
+            waiting_path
+        )
+        print('Resultado da simulação salvo em: ' + waiting_path)
+
+        # Plota os valores de usuários em espera no sistema
+        total_path = f'./results/test_case_{idx + 1}/total.png'
+        save_simulation_results(
+            X,
+            total_for_iteration,
+            f'Número de clientes no sistema para \u03BB={test_case[0]}, \u03BC={test_case[1]} e s={test_case[2]}',
+            'Iteração',
+            'Número de clientes no sistema',
+            total_path
+        )
+        print('Resultado da simulação salvo em: ' + total_path)
+    
+    print('Simulação concluída, confira os resultados na pasta ./results')
 
     return
 
